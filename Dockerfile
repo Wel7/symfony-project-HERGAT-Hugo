@@ -1,5 +1,5 @@
 # Utiliser l'image officielle PHP 8.3 avec FPM et extensions nécessaires
-FROM php:8.3-fpm
+FROM php:8.2-fpm
 
 # Installer des dépendances nécessaires pour Symfony et Mercure
 RUN apt-get update && apt-get install -y \

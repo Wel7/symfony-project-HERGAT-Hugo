@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+{% block stylesheets %}
+<style>
+footer {
+  position: relative;
+  bottom: 0;
+  width: 100%;
+  height: 60px;
+  color: white;
+  background-color: #142c44;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+img {
+  margin-right: 10px;
+}
+a {
+  color: white;
+}
+</style>
+{% endblock %}
+<footer class="footer rounded-bottom">
+    <img src="{{ asset('img/logo.jpg') }}" alt="Image" height="40">
+    <img src="{{ asset('img/MSHE.jpg') }}" alt="Image" height="40">
+    <small>
+            Tous les droits sont réservés (2024). |
+            <a href="{{ path('home') }}">Conditions d'utilisation</a> |
+            <a href="{{ path('home') }}">Mentions légales</a> |
+            <a href="{{ path('home') }}">À propos</a>
+    </small>
+</footer>
