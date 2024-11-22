@@ -1,5 +1,6 @@
 <?php
 
+
 namespace App\Entity;
 
 use App\Enum\ProductStatus;
@@ -7,6 +8,9 @@ use App\Repository\ProductRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+
+ini_set('memory_limit', '2G');
+
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 class Product
@@ -22,7 +26,7 @@ class Product
     #[ORM\Column]
     private ?float $price = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 1024)]
     private ?string $description = null;
 
     #[ORM\Column]
@@ -36,8 +40,6 @@ class Product
     #[ORM\OneToMany(targetEntity: Image::class, mappedBy: 'product')]
     private Collection $image;
 
-    #[ORM\ManyToOne(inversedBy: 'products')]
-    private ?Categorie $categorie = null;
 
     /**
      * @var Collection<int, OrderItem>
@@ -48,10 +50,17 @@ class Product
     #[ORM\Column(enumType: ProductStatus::class)]
     private ?ProductStatus $status = null;
 
+    /**
+     * @var Collection<int, Categorie>
+     */
+    #[ORM\ManyToMany(targetEntity: Categorie::class, inversedBy: 'products')]
+    private Collection $Categories;
+
     public function __construct()
     {
         $this->image = new ArrayCollection();
         $this->orderItems = new ArrayCollection();
+        $this->Categories = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -144,17 +153,7 @@ class Product
         return $this;
     }
 
-    public function getCategorie(): ?Categorie
-    {
-        return $this->categorie;
-    }
 
-    public function setCategorie(?Categorie $categorie): static
-    {
-        $this->categorie = $categorie;
-
-        return $this;
-    }
 
     /**
      * @return Collection<int, OrderItem>
@@ -194,6 +193,30 @@ class Product
     public function setStatus(ProductStatus $status): static
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Categorie>
+     */
+    public function getCategories(): Collection
+    {
+        return $this->Categories;
+    }
+
+    public function addCategory(Categorie $category): static
+    {
+        if (!$this->Categories->contains($category)) {
+            $this->Categories->add($category);
+        }
+
+        return $this;
+    }
+
+    public function removeCategory(Categorie $category): static
+    {
+        $this->Categories->removeElement($category);
 
         return $this;
     }

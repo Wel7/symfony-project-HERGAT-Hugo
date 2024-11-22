@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+
+{% block body %}
+	<table classe="table">
+		<tr>
+			<th scope="col">ID</th>
+			<th scope="col">Articles</th>
+			<th scope="col">Prix total</th>
+		</tr>
+		<tbody>
+			{% for order in pagination %}
+				<tr>
+					<td>{{order.id}}</td>
+					<td></td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+{% endblock %}

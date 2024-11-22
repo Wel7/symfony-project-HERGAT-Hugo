@@ -21,13 +21,16 @@ class Categorie
     /**
      * @var Collection<int, Product>
      */
-    #[ORM\OneToMany(targetEntity: Product::class, mappedBy: 'categorie')]
+    #[ORM\ManyToMany(targetEntity: Product::class, mappedBy: 'Categories')]
     private Collection $products;
 
     public function __construct()
     {
         $this->products = new ArrayCollection();
     }
+
+
+
 
     public function getId(): ?int
     {
@@ -56,6 +59,10 @@ class Categorie
     /**
      * @return Collection<int, Product>
      */
+
+    /**
+     * @return Collection<int, Product>
+     */
     public function getProducts(): Collection
     {
         return $this->products;
@@ -65,7 +72,7 @@ class Categorie
     {
         if (!$this->products->contains($product)) {
             $this->products->add($product);
-            $product->setCategorie($this);
+            $product->addCategory($this);
         }
 
         return $this;
@@ -74,12 +81,10 @@ class Categorie
     public function removeProduct(Product $product): static
     {
         if ($this->products->removeElement($product)) {
-            // set the owning side to null (unless already changed)
-            if ($product->getCategorie() === $this) {
-                $product->setCategorie(null);
-            }
+            $product->removeCategory($this);
         }
 
         return $this;
     }
+
 }

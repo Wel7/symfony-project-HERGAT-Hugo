@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Enum\OrderStatus;
 use App\Repository\OrderRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: OrderRepository::class)]
@@ -26,6 +28,17 @@ class Order
 
     #[ORM\ManyToOne(inversedBy: 'orders')]
     private ?User $user = null;
+
+    /**
+     * @var Collection<int, OrderItem>
+     */
+    #[ORM\OneToMany(targetEntity: OrderItem::class, mappedBy: 'orderI')]
+    private Collection $OrderItems;
+
+    public function __construct()
+    {
+        $this->OrderItems = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -83,6 +96,36 @@ class Order
     public function setUser(?User $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, OrderItem>
+     */
+    public function getOrderItems(): Collection
+    {
+        return $this->OrderItems;
+    }
+
+    public function addOrderItem(OrderItem $orderItem): static
+    {
+        if (!$this->OrderItems->contains($orderItem)) {
+            $this->OrderItems->add($orderItem);
+            $orderItem->setOrderI($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrderItem(OrderItem $orderItem): static
+    {
+        if ($this->OrderItems->removeElement($orderItem)) {
+            // set the owning side to null (unless already changed)
+            if ($orderItem->getOrderI() === $this) {
+                $orderItem->setOrderI(null);
+            }
+        }
 
         return $this;
     }
