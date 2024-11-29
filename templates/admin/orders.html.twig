@@ -2,20 +2,35 @@
 
 
 {% block body %}
-	<table classe="table">
-		<tr>
-			<th scope="col">ID</th>
-			<th scope="col">Articles</th>
-			<th scope="col">Prix total</th>
-		</tr>
-		<tbody>
-			{% for order in pagination %}
+	<div class="container mt-4">
+		<h2>Orders :</h2>
+		<table class="table table-bordered table-hover table-striped">
+			<thead>
 				<tr>
-					<td>{{order.id}}</td>
-					<td></td>
+					<th scope="col">ID</th>
+					<th scope="col">Articles</th>
+					<th scope="col">Prix total</th>
 				</tr>
-			{% endfor %}
-		</tbody>
-	</table>
-
+			</thead>
+			<tbody>
+				{% for order in pagination %}
+					<tr>
+						<td>{{ order.id }}</td>
+						<td>
+							{% for item in order.OrderItems %}
+								{{ item.product.name }}<br>
+							{% endfor %}
+						</td>
+						<td>
+							{% set total_price = 0 %}
+							{% for item in order.OrderItems %}
+								{% set total_price = total_price + item.product.price %}
+							{% endfor %}
+							{{ total_price }}$
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
 {% endblock %}

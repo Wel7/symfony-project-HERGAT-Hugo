@@ -26,6 +26,36 @@ class OrderRepository extends ServiceEntityRepository
         ->getResult();
     }
 
+    public function getOrdersCountByMonth(): array
+{
+    $conn = $this->getEntityManager()->getConnection();
+    $sql = "
+        SELECT 
+            DATE_FORMAT(o.created_at, '%Y-%m') AS month, 
+            COUNT(DISTINCT o.id) AS ordersCount,
+            SUM(oi.quantity * oi.product_price) AS totalRevenue
+        FROM `order` o
+        LEFT JOIN order_item oi on o.id = oi.order_i_id
+        WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR)
+        GROUP BY month
+        ORDER BY month ASC;
+    ";
+
+    $stmt = $conn->prepare($sql);
+    $resultSet = $stmt->executeQuery();
+
+    return $resultSet->fetchAllAssociative();
+}
+
+public function findLastFiveOrders(): array
+{
+    return $this->createQueryBuilder('o')
+        ->orderBy('o.createdAt', 'DESC') 
+        ->setMaxResults(5) 
+        ->getQuery()
+        ->getResult();
+}
+
 //    /**
 //     * @return Order[] Returns an array of Order objects
 //     */

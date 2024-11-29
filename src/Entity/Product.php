@@ -37,14 +37,14 @@ class Product
     /**
      * @var Collection<int, Image>
      */
-    #[ORM\OneToMany(targetEntity: Image::class, mappedBy: 'product')]
+    #[ORM\OneToMany(targetEntity: Image::class, mappedBy: 'product', cascade: ['persist', 'remove'], fetch:"EAGER")]
     private Collection $image;
 
 
     /**
      * @var Collection<int, OrderItem>
      */
-    #[ORM\OneToMany(targetEntity: OrderItem::class, mappedBy: 'product')]
+    #[ORM\OneToMany(targetEntity: OrderItem::class, mappedBy: 'product', fetch:"EAGER")]
     private Collection $orderItems;
 
     #[ORM\Column(enumType: ProductStatus::class)]
@@ -53,14 +53,21 @@ class Product
     /**
      * @var Collection<int, Categorie>
      */
-    #[ORM\ManyToMany(targetEntity: Categorie::class, inversedBy: 'products')]
-    private Collection $Categories;
+    #[ORM\ManyToMany(targetEntity: Categorie::class, inversedBy: 'products', fetch:"EAGER")]
+    private Collection $categories;
+
+    /**
+     * @var Collection<int, Vtuber>
+     */
+    #[ORM\ManyToMany(targetEntity: Vtuber::class, inversedBy: 'products')]
+    private Collection $vtuber;
 
     public function __construct()
     {
         $this->image = new ArrayCollection();
         $this->orderItems = new ArrayCollection();
-        $this->Categories = new ArrayCollection();
+        $this->categories = new ArrayCollection();
+        $this->vtuber = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -202,13 +209,13 @@ class Product
      */
     public function getCategories(): Collection
     {
-        return $this->Categories;
+        return $this->categories;
     }
 
     public function addCategory(Categorie $category): static
     {
-        if (!$this->Categories->contains($category)) {
-            $this->Categories->add($category);
+        if (!$this->categories->contains($category)) {
+            $this->categories->add($category);
         }
 
         return $this;
@@ -216,7 +223,31 @@ class Product
 
     public function removeCategory(Categorie $category): static
     {
-        $this->Categories->removeElement($category);
+        $this->categories->removeElement($category);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Vtuber>
+     */
+    public function getVtuber(): Collection
+    {
+        return $this->vtuber;
+    }
+
+    public function addVtuber(Vtuber $vtuber): static
+    {
+        if (!$this->vtuber->contains($vtuber)) {
+            $this->vtuber->add($vtuber);
+        }
+
+        return $this;
+    }
+
+    public function removeVtuber(Vtuber $vtuber): static
+    {
+        $this->vtuber->removeElement($vtuber);
 
         return $this;
     }

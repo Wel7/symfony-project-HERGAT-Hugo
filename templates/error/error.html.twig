@@ -1,0 +1,14 @@
+{# templates/bundles/TwigBundle/Exception/error404.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+	<div class="container d-flex flex-column justify-content-center mt-4">
+		<h1 class="mx-auto">Page not found</h1>
+		<p class="mx-auto">We're sorry we didn't find you wanted ! But we have something for you !
+		</p>
+		<iframe class="mx-auto" width="560" height="315" src="https://www.youtube-nocookie.com/embed/BXB26PzV31k?si=59zkpWVViWqyAmNo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+		<p class="mx-auto">The requested page couldn't be located. Checkout for any URL misspelling or
+			<a href="{{ path('home') }}">return to the homepage</a>.
+		</p>
+	</div>
+{% endblock %}

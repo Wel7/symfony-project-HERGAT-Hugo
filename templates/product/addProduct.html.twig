@@ -1,0 +1,153 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+	<div class="container mt-4">
+		<h2>Add Product</h2>
+		{{ form_start(form) }}
+		{{ form_errors(form) }}
+		<div class="form-group">
+			{{ form_label(form.name) }}
+			{{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
+			{{ form_errors(form.name) }}
+
+		</div>
+		<div class="form-group">
+			{{ form_label(form.price) }}
+			{{ form_widget(form.price, {'attr': {'class': 'form-control', 'step': '0.01'}}) }}
+			{{ form_errors(form.price) }}
+
+		</div>
+		<div class="form-group">
+			{{ form_label(form.description) }}
+			{{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
+			{{ form_errors(form.description) }}
+
+		</div>
+		<div class="form-group">
+			{{ form_label(form.stock) }}
+			{{ form_widget(form.stock, {'attr': {'class': 'form-control'}}) }}
+			{{ form_errors(form.stock) }}
+
+		</div>
+		<div class="form-group">
+			{{ form_label(form.status) }}
+			{{ form_widget(form.status, {'attr': {'class': 'form-control'}}) }}
+			{{ form_errors(form.status) }}
+
+		</div>
+		<div class="form-group">
+			<h3>Images</h3>
+			<div class="form-collection" data-prototype="{{ form_widget(form.image.vars.prototype)|e('html_attr') }}">
+				{{ form_widget(form.image) }}
+			</div>
+			{{ form_errors(form.image) }}
+			<button type="button" class="btn btn-secondary add-image-btn">Add Image</button>
+		</div>
+
+		<div class="form-group">
+			{{ form_label(form.Categories, 'Categories', {'label_attr': {'class': 'form-label'}}) }}
+
+			<!-- Search Section -->
+			<div class="mb-3">
+				<input type="text" id="categorySearch" class="form-control" placeholder="Search categories..." onkeyup="filterCategories()">
+			</div>
+
+			<!-- Categories Grid -->
+			<div class="scrollable-box mb-3">
+				<div class="row" id="categoryGrid">
+					{% for category in form.Categories %}
+						<div class="col-md-4 mb-2 category-item">
+							<div class="form-check">
+								{{ form_widget(category, {
+                            'attr': {
+                                'class': 'form-check-input'
+                            }
+                        }) }}
+								{{ form_label(category, null, {'label_attr': {'class': 'form-check-label'}}) }}
+							</div>
+						</div>
+					{% endfor %}
+				</div>
+
+				<div class="invalid-feedback d-block">
+					{{ form_errors(form.Categories) }}
+				</div>
+			</div>
+		</div>
+
+
+		<button type="submit" class="btn btn-primary">Submit</button>
+		{{ form_end(form) }}
+	</div>
+{% endblock %}
+
+{% block script %} <script>
+																															 document.addEventListener('DOMContentLoaded', function() {
+																														    let collectionHolder = document.querySelector('.form-collection');
+																														    let addButton = document.querySelector('.add-image-btn');
+																														
+																														    if (!collectionHolder || !addButton) {
+																														        console.error('Collection holder or add button not found.');
+																														        return;
+																														    }
+																														
+																														    let prototype = collectionHolder.dataset.prototype;
+																														    let index = collectionHolder.children.length;
+																														
+																														    // Function to add a new image form with Bootstrap styling
+																														    function addImageForm() {
+																														        let newForm = prototype.replace(/__name__/g, index);
+																														        
+																														        // Create a new div container for the form
+																														        let formElement = document.createElement('div');
+																														        formElement.classList.add('form-group', 'image-form'); 
+																														        
+																														        formElement.innerHTML = `
+																														            <label for="product_form_image_${index}_url" class="form-label">URL</label>
+																													               <div class="row mb-3">
+																														                <div class="col-md-8">
+																														                    <input type="text" id="product_form_image_${index}_url" name="product_form[image][${index}][url]" class="form-control" required="required" maxlength="255">
+																														                </div>
+																														                <div class="col-md-4 d-flex align-items-center justify-content-center">
+																														                    <button type="button" class="btn btn-danger remove-image-btn" aria-label="Remove Image">
+																														                        <i class="bi bi-x-circle"></i> Remove
+																														                    </button>
+																														                </div>
+																														            </div>
+																														        `;
+																														
+																														        collectionHolder.appendChild(formElement);
+																														        
+																														        index++;
+																														
+																														        formElement.querySelector('.remove-image-btn').addEventListener('click', function() {
+																														            formElement.remove();
+																														        });
+																														    }
+																														
+																														    addButton.addEventListener('click', function() {
+																														        addImageForm();
+																														    });
+																														});
+																											</script>
+	 <script>
+														    function filterCategories() {
+														        var input, filter, grid, items, label, i;
+														        input = document.getElementById('categorySearch');
+														        filter = input.value.trim().toLowerCase();  
+														        grid = document.getElementById('categoryGrid');
+														        items = grid.getElementsByClassName('category-item');  
+														
+														        for (i = 0; i < items.length; i++) {
+														            label = items[i].getElementsByClassName('form-check-label')[0];  
+														            if (label) {
+														                if (label.innerText.toLowerCase().indexOf(filter) > -1) {
+														                    items[i].style.display = ""; 
+														                } else {
+														                    items[i].style.display = "none";
+														                }
+														            }
+														        }
+														    }
+														</script>
+{% endblock %}

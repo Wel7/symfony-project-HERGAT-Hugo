@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+	<div class="container mt-5">
+		<h1 class="text-center">Produits de
+			{{ name }}</h1>
+
+		{% if products|length > 0 %}
+			<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mt-4">
+				{% for product in products %}
+					<div class="col">
+						<div class="relative">
+							<a href="/product/{{ product.name|replace({' ': '-'})|lower }}" class="text-reset text-decoration-none">
+								<div class="card h-100 shadow-sm">
+									<div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light" data-mdb-ripple-color="light">
+										<img loading="lazy" src="{{ asset(product.image[0].url) }}" alt="image_not_found" class="card-img-top"/>
+										<div class="hover-overlay">
+											<div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+										</div>
+									</div>
+									<div class="card-body text-center">
+										<h5 class="card-title mb-3">{{ product.name }}</h5>
+										<h6 class="mb-3">{{ product.price }}
+											€</h6>
+									</div>
+								</div>
+							</a>
+						</div>
+					</div>
+				{% endfor %}
+			</div>
+		{% else %}
+			<div class="alert alert-warning text-center mt-4">
+				Aucun produit n'est associé à
+				{{ name }}
+				pour le moment.
+			</div>
+		{% endif %}
+	</div>
+
+{% endblock %}

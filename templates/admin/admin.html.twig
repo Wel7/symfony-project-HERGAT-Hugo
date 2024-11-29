@@ -1,0 +1,162 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+	<div class="container mt-4">
+		<h2>{{"admin.panel" | trans}}</h2>
+		<div class="row justify-content-evenly">
+			<ul class="list-group w-auto">
+				<li class="list-group-item">
+					<a href="{{ path('app_admin_orders') }}">List of All Orders</a>
+				</li>
+				<li class="list-group-item">
+					<a href="{{ path('app_admin_products') }}">List of All Products</a>
+				</li>
+			</ul>
+			<ul class="list-group w-auto">
+				<li class="list-group-item">
+					<a>{{'admin.money' | trans}}
+						: ${{ ordersTotal|reduce((carry, value) => carry + value, 0)|number_format(2, '.', ',') }}</a>
+				</li>
+				<li class="list-group-item">
+					<div>
+						<a>{{"admin.lastCommand"}}
+							:</a>
+						<ul>
+							{% for order in lastOrders %}
+								<li>
+									Commande #{{ order.id }}
+									-
+									{{ order.createdAt|date('d/m/Y H:i') }}
+									(Status:{{order.status.value}})
+								</li>
+							{% else %}
+								<li>Aucune commande récente.</li>
+							{% endfor %}
+						</ul>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<div class="container mt-4">
+		<h2>{{"admin.stat" | trans}}</h2>
+		<canvas id="ordersChart" style="background-color: rgba(240, 240, 240, 0.3);"></canvas>
+	</li>
+</div>
+<div class="container mt-4">
+	<h2>{{"admin.available" | trans}}</h2>
+	<canvas id="availabilityChart" style="background-color: rgba(240, 240, 240, 0.3); max-height: 50vh;"></canvas>
+</div>
+ <script src=" https://cdn.jsdelivr.net/npm/chart.js"></script> <script>
+																																																				    const ctx = document.getElementById('ordersChart').getContext('2d');
+																																																				
+																																																				    const months = {{ months | json_encode | raw }};  
+																																																				    const ordersCount = {{ ordersCount | json_encode | raw }};  
+																																																					 const ordersTotal = {{ ordersTotal | json_encode | raw }}; 
+																																																				    // Create the chart
+																																																				    const ordersChart = new Chart(ctx, {
+																																																				        type: 'bar',
+																																																				        data: {
+																																																				            labels: months,  // Dynamic months array
+																																																				            datasets: [{
+																																																				                label: 'Nombre de commande',
+																																																				                data: ordersCount,  
+																																																				                backgroundColor: 'rgba(54, 162, 235, 0.5)', 
+																																																				                borderColor: 'rgba(54, 162, 235, 1)', 
+																																																				                borderWidth: 1
+																																																				            }]
+																																																				        },
+																																																				        options: {
+																																																				            responsive: true,
+																																																				            scales: {
+																																																				                x: {
+																																																				                    ticks: {
+																																																				                        autoSkip: false,  
+																																																				                        maxRotation: 45,  
+																																																				                        minRotation: 45
+																																																				                    }
+																																																				                },
+																																																				                y: {
+																																																				                    beginAtZero: true,
+																																																				                    ticks: {
+																																																				                        stepSize: 1  // Adjust Y-axis ticks step size if necessary
+																																																				                    }
+																																																				                }
+																																																				            },
+																																																				            plugins: {
+																																																				                legend: {
+																																																				                    position: 'top'  // Position the legend at the top
+																																																				                },
+																																																				                tooltip: {
+																																																				                    callbacks: {
+																																																				                        label: function(tooltipItem) {
+																										                        const index = tooltipItem.dataIndex;
+																										
+																										                        const count = ordersCount[index];
+																										                        const total = ordersTotal[index];
+																										
+																										                        return `Orders: ${count}, \nMoney: €${total.toFixed(2)}`;
+																										                    }
+																																																				                    }
+																																																				                }
+																																																				            },
+																																																								animation: {
+																																	                duration: 1500,  
+																																	                easing: 'easeOutBounce',  
+																																	                delay: (context) => {
+																																	                    // Add delay for each data element
+																																	                    let delay = 0;
+																																	                    if (context.type === 'data' && context.mode === 'default' && context.datasetIndex === 0) {
+																																	                        delay = context.dataIndex * 100;  
+																																	                    }
+																																	                    return delay;
+																																	                }
+																																	            }
+																																																				        }
+																																																				    });
+																																																				</script>
+ <script>
+																																		    const ctx2 = document.getElementById('availabilityChart').getContext('2d');
+																																		
+																																		    // Dynamic data passed from Symfony controller
+																																		    const statuses = {{ statuses | json_encode | raw }};
+																																		    const counts = {{ counts | json_encode | raw }};
+																																		
+																																		    // Convert counts to an array of numbers
+																																		    const countsArray = [
+																																		        parseInt(counts.disponible),
+																																		        parseInt(counts.rupture),
+																																		        parseInt(counts.precommande)
+																																		    ];
+																																	
+																																			 console.log(countsArray)
+																																		
+																																		    const availabilityChart = new Chart(ctx2, {
+																																		        type: 'pie',
+																																		        data: {
+																																		            labels: statuses,
+																																		            datasets: [{
+																																		                label: 'Ratio de disponibilité des produits',
+																																		                data: countsArray,
+																																		                backgroundColor: ['#4CAF50', '#F44336', '#FFC107'],
+																																		                borderColor: '#fff',
+																																		                borderWidth: 1
+																																		            }]
+																																		        },
+																																		        options: {
+																																		            responsive: true,
+																																		            plugins: {
+																																		                legend: {
+																																		                    position: 'top',
+																																		                },
+																																		                tooltip: {
+																																		                    callbacks: {
+																																		                        label: function(tooltipItem) {
+																																		                            return tooltipItem.label + ': ' + tooltipItem.raw + ' produits';
+																																		                        }
+																																		                    }
+																																		                }
+																																		            }
+																																		        }
+																																		    });
+																																		</script>{% endblock %}
