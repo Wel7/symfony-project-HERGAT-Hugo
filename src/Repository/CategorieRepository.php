@@ -16,6 +16,16 @@ class CategorieRepository extends ServiceEntityRepository
         parent::__construct($registry, Categorie::class);
     }
 
+    public function findProductsByCategoryId($categoryId)
+    {
+        return $this->createQueryBuilder('c')
+            ->leftJoin('c.products', 'p')
+            ->addSelect('p')
+            ->where('c.id = :id')
+            ->setParameter('id', $categoryId)
+            ->getQuery();
+    }
+
     //    /**
     //     * @return Categorie[] Returns an array of Categorie objects
     //     */

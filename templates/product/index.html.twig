@@ -22,15 +22,15 @@
 
 				<div class="mb-4">
 					<label for="quantity" class="form-label">Quantity:</label>
-					<input type="number" class="form-control" id="quantity" value="1" min="1" style="width: 80px;">
+					{% if product.stock > 0 %}
+						<input type="number" class="form-control" id="quantity" value="1" min="1" max="{{ product.stock }}" style="width: 80px;">
+					{% else %}
+						<p>Ce produit n'est plus disponible.</p>
+					{% endif %}
 				</div>
-				<button class="btn btn-primary btn-lg mb-3 me-2">
+				<button class="btn btn-primary btn-lg mb-3 me-2" {% if not is_granted('IS_AUTHENTICATED_FULLY') %} disabled {% endif %}>
 					<i class="bi bi-cart-plus"></i>
 					Add to Cart
-				</button>
-				<button class="btn btn-outline-secondary btn-lg mb-3">
-					<i class="bi bi-heart"></i>
-					Add to Wishlist
 				</button>
 				<div class="d-flex">
 					<div class="mt-4">
@@ -38,7 +38,7 @@
 						<ul>
 							{% for category in product.categories %}
 								<li>
-									<a href="{{ path('app_category', {'id': category.id}) }}">{{category.nom}}</a>
+									<a href="{{ path('app_category', {'id': category.id, 'name': category.name|lower|replace({' ': '_'})}) }}">{{ category.name }}</a>
 								</li>
 							{% endfor %}
 						</ul>

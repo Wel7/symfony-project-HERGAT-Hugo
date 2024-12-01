@@ -11,15 +11,8 @@
 				<li class="nav-item">
 					<a class="nav-link" href="{{path('app_vtuber')}}">{{ "navbar.creator" | trans}}</a>
 				</li>
-				<li class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Products</a>
-					<div class="dropdown-menu dropdown-menu-dark">
-						<a class="dropdown-item" href="#">Action</a>
-						<a class="dropdown-item" href="#">Another action</a>
-						<a class="dropdown-item" href="#">Something else here</a>
-						<div class="dropdown-divider"></div>
-						<a class="dropdown-item" href="#">Separated link</a>
-					</div>
+				<li class="nav-item">
+					<a class="nav-link" href="{{path('app_categories')}}">{{ "navbar.category" | trans}}</a>
 				</li>
 			</ul>
 			<form class="d-flex">
@@ -27,12 +20,15 @@
 				<button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
 			</form>
 			{% if is_granted('IS_AUTHENTICATED_FULLY') %}
-				<!-- If the user is authenticated, show the profile button -->
-				<a href="{{ path('app_profile') }}" class="btn btn-primary">Profile</a>
+				{% if is_granted('ROLE_ADMIN') %}
+					<a href="{{ path('app_admin') }}" class="btn btn-primary">Admin</a>
+				{% else %}
+					<a href="{{ path('app_cart') }}" class="btn btn-primary">Cart</a>
+				{% endif %}
 			{% else %}
-				<!-- If the user is not authenticated, show the login button -->
 				<a href="{{ path('app_login') }}" class="btn btn-primary">Login</a>
 			{% endif %}
+
 		</div>
 	</div>
 </nav>

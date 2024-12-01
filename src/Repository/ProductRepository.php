@@ -16,43 +16,52 @@ class ProductRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Product::class);
     }
-         /**
-         * @return Product[] Returns an array of Product objects
-         */
-        public function queryAllProducts():Query 
-        {
-            return $this->createQueryBuilder('p')
-                ->getQuery()
-            ;
-        }
+    /**
+     * @return Product[] Returns an array of Product objects
+     */
+    public function queryAllProducts(): Query
+    {
+        return $this->createQueryBuilder('p')
+            ->getQuery()
+        ;
+    }
 
-        public function queryOneProductForProduct($name) 
-        {
-            return $this->createQueryBuilder('p')
-                ->where('p.name = :name')
-                ->setParameter('name', $name)
-                ->setMaxResults(1)
-                ->getQuery();
-        }
+    public function queryOneProductForProduct($name)
+    {
+        return $this->createQueryBuilder('p')
+            ->where('p.name = :name')
+            ->setParameter('name', $name)
+            ->setMaxResults(1)
+            ->getQuery();
+    }
 
-        public function getProductAvailabilityCounts(): array
-{
-    return $this->createQueryBuilder('p')
-    ->select('
+    public function getProductAvailabilityCounts(): array
+    {
+        return $this->createQueryBuilder('p')
+            ->select('
         SUM(CASE WHEN p.status = :disponible THEN 1 ELSE 0 END) AS disponible,
         SUM(CASE WHEN p.status = :rupture THEN 1 ELSE 0 END) AS rupture,
         SUM(CASE WHEN p.status = :precommande THEN 1 ELSE 0 END) AS precommande
     ')
-    ->setParameter('disponible', 'Disponible')
-    ->setParameter('rupture', 'Rupture')
-    ->setParameter('precommande', 'Precommande')
-    ->getQuery()
-    ->getSingleResult();
-}
+            ->setParameter('disponible', 'Disponible')
+            ->setParameter('rupture', 'Rupture')
+            ->setParameter('precommande', 'Precommande')
+            ->getQuery()
+            ->getSingleResult();
+    }
 
-        
-    
-        //    /**
+    public function findProductsByCategoryId($categoryId)
+    {
+        return $this->createQueryBuilder('p')
+            ->innerJoin('p.categories', 'c')
+            ->where('c.id = :id')
+            ->setParameter('id', $categoryId)
+            ->getQuery();
+    }
+
+
+
+    //    /**
     //     * @return Product[] Returns an array of Product objects
     //     */
     //    public function findByExampleField($value): array
