@@ -18,8 +18,11 @@ Normaleement un `docker compose up -d` suffit, mais des fois les dépendances pe
 - 5 : fait
 - 6 : Addition, suppresion faite, pas de modification
 - 7 : fait
-- 8 : panier fait
-- 9 (sujet 2) : pas fait
+- 8 : panier + achat fait (avec gestion des stocks)
+- 9 (sujet 2) : update stock en direct, update panier presque en direct
+
+Petite note :
+J'avais ajouté des règles a la bdd pour gérer en stock/plus de stock, mais je n'ai pas trouvé comment ajouter de règles a la bdd via les fixtures/en l'automatisant.
 
 # Symfony 7.1 Boilerplate
 

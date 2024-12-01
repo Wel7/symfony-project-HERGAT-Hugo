@@ -17,7 +17,8 @@
 						<s>$399.99</s>
 					</span>
 				</div>
-				<p class="mb-4"></p>
+				<p id="stock-display" class="mb-4">Stock :
+					{{ product.stock }}</p>
 				{{ form_start(form) }}
 				<div class="mb-4">
 					{{ form_label(form.quantity, 'Quantity:', {'label_attr': {'class': 'form-label'}}) }}
@@ -63,4 +64,34 @@
 			</div>
 		</div>
 	</div>
+	 <script>
+			const productId = '{{ product.id }}';
+	const mercureHubUrl = '{{ mercureHubUrl|e('js') }}';
+	
+	// Écouter les mises à jour du produit via Mercure
+	const topicUrl = `/products/${productId}/stock`;
+	const eventSource = new EventSource(mercureHubUrl + '?topic=' + encodeURIComponent(topicUrl));
+	
+	eventSource.onopen = () => console.log('Connexion ouverte avec le hub Mercure');
+	eventSource.onerror = (error) => console.error('Erreur avec Mercure :', error);
+	
+	
+	eventSource.onmessage = function (event) {
+	const data = JSON.parse(event.data);
+	
+	console.log('Mise à jour reçue pour le produit :', data);
+	const stockDisplay = document.getElementById('stock-display');
+	if (stockDisplay) {
+	stockDisplay.innerText = `Stock : ${
+	data.stock
+	}`;
+	}
+	
+	const buyButton = document.getElementById('buy-button');
+	if (data.stock <= 0 && buyButton) {
+	buyButton.disabled = true;
+	alert('Le produit est en rupture de stock !');
+	}
+	};
+		</script>
 {% endblock %}

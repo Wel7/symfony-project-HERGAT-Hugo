@@ -37,6 +37,7 @@ class ProductController extends AbstractController
         $productStock = $result[0]->getStock();
         $productId = (string) $result[0]->getId();
         $productPrice = (float) $result[0]->getPrice();
+        $mercureUrl = $this->getParameter('mercurePublicUrl');
 
 
         //addToCart
@@ -93,7 +94,8 @@ class ProductController extends AbstractController
 
         return $this->render('product/index.html.twig', [
             'product' => $result[0],
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'mercureHubUrl' => $mercureUrl,
         ]);
     }
 

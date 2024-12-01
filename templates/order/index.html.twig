@@ -18,7 +18,7 @@
 				</thead>
 				<tbody>
 					{% for item in orderData.orderItems %}
-						<tr>
+						<tr data-product-id="{{ item.product.id }}">
 							<td>{{ item.product.name }}</td>
 							<td>{{ item.quantity }}</td>
 							<td>{{ item.product.price }}</td>
@@ -29,10 +29,62 @@
 			</table>
 
 			<div class="mt-4">
-				<a href="#" class="btn btn-success btn-lg">Acheter</a>
+				<a href="#" id='order' class="btn btn-success btn-lg">Acheter</a>
 			</div>
 		{% else %}
 			<p>Votre panier est vide.</p>
 		{% endif %}
 	</div>
+
+	 <script>
+			{% if orderData is not null %}
+	let orderId = {{ orderData.id }};
+	const mercureHubUrl = '{{ mercureHubUrl|e('js') }}';
+	const topicUrl = `/order/${orderId}`;
+	
+	const eventSource = new EventSource(mercureHubUrl + '?topic=' + encodeURIComponent(topicUrl));
+	
+	eventSource.onmessage = function (event) {
+	const textResponse = response.text().then((text) => {
+	console.log(text)
+	});
+	
+	const data = JSON.parse(event.data);
+	
+	if (data.productId) {
+	alert(`Le produit avec l'ID ${
+	data.productId
+	} a été retiré de la commande`);
+	
+	// Retirer l'item du DOM
+	const row = document.querySelector(`tr[data-product-id="${
+	data.productId
+	}"]`);
+	if (row) {
+	row.remove(); // Supprimer la ligne correspondante
+	}
+	}
+	};{% endif %}
+	
+	document.getElementById('order').addEventListener('click', async () => {
+	try {
+	const response = await fetch (`/order/${orderId}`, {
+	method: 'POST',
+	headers: {
+	'Content-Type': 'application/json'
+	}
+	});
+	
+	const data = await response.json();
+	if (! response.ok) {
+	alert(data.error || 'Erreur lors de l\'achat');
+	return;
+	}
+	
+	alert('Achat réussi ! Commande mise en préparation.');
+	} catch (error) {
+	console.error('Erreur lors de l\'achat:', error);
+	}
+	});
+		</script>
 {% endblock %}
