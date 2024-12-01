@@ -3,3 +3,23 @@ acceuil:
 
 navbar:
   creator: Creator
+  category: Category
+
+vtuber:
+  list: Vtuber's List
+  product: Product made in collaboration with
+
+categories:
+  list: List of categories
+
+admin:
+  panel: Panel
+  stat: Stats
+  available: Dispo
+  lastCommand: Last command
+  money: Money generated
+
+product:
+  list: List of all product
+  del: Delete
+  add: Add

@@ -4,26 +4,28 @@ namespace App\Controller;
 
 use App\Entity\Product;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Vtuber;
-use App\Entity\Categorie;
+use App\Entity\Order;
+use App\Entity\OrderItem;
+use App\Enum\OrderStatus;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
-
+use Symfony\Component\HttpFoundation\Response;
+use App\Form\AddToCartType;
+use Psr\Log\LoggerInterface;
 
 class ProductController extends AbstractController
 {
     #[Route('/product/{name}', name: 'app_product')]
-    public function index($name, EntityManagerInterface $em): Response
+    public function index($name, EntityManagerInterface $em, Request $request, LoggerInterface $logger): Response
     {
+        //Show items
         $transformedName = explode('-', $name);
         $transformedName = implode(' ', $transformedName);
 
         $query = $em->getRepository(Product::class)->queryOneProductForProduct($transformedName);
-        dump($transformedName);
-        dump($query);
         $result = $query->getResult();
 
         if (!$result) {
@@ -32,9 +34,66 @@ class ProductController extends AbstractController
 
         $result[0]->getCategories()->initialize();
 
+        $productStock = $result[0]->getStock();
+        $productId = (string) $result[0]->getId();
+        $productPrice = (float) $result[0]->getPrice();
+
+
+        //addToCart
+        $form = $this->createForm(AddToCartType::class, null, [
+            'productStock' =>  $productStock,
+            'productId' =>  $productId,
+            'productPrice' =>  $productPrice,
+            'attr' => ['data-turbo' => 'true'],
+        ]);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $logger->info("C'est invalide parceque ????");
+            foreach ($form->getErrors(true) as $error) {
+                $logger->info('Error: ' . $error->getMessage());
+            }
+            $logger->info('Form data: ' . json_encode($form->getData()));
+        }
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $logger->info("test3");
+            $item = $form->getData();
+            dump($item);
+            $user = $this->getUser();
+
+            $order = $em->getRepository(Order::class)->findOneBy([
+                'user' => $user,
+                'status' => OrderStatus::CART,
+            ]);
+
+
+
+            $orderItem = new OrderItem();
+            $orderItem->setProduct($result[0]);
+            $orderItem->setQuantity($item['quantity']);
+            $orderItem->setProductPrice($item['productPrice']);
+            $em->persist($orderItem);
+
+            if (!$order) {
+                $order = new Order();
+                $order->setUser($user);
+                $order->setReference(uniqid());
+                $order->setCreatedAt(new \DateTimeImmutable());
+                $order->setStatus(OrderStatus::CART);
+            }
+            $order->addOrderItem($orderItem);
+            $em->persist($order);
+            $em->flush();
+
+            return $this->redirectToRoute('app_cart');
+        }
+
 
         return $this->render('product/index.html.twig', [
             'product' => $result[0],
+            'form' => $form->createView()
         ]);
     }
 
@@ -77,7 +136,6 @@ class ProductController extends AbstractController
             24 /* limit per page */
         );
 
-        dump($pagination);
 
         return $this->render('product/category.html.twig', ['pagination' => $pagination, 'name' => $formatedName,]);
     }

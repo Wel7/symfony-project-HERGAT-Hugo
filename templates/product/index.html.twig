@@ -6,7 +6,6 @@
 			class="row">
 			<!-- Product Images -->
 			<div class="col-md-6 mb-4">
-				{% dump product %}
 				<img src="{{product.image[0].url}}" alt="Product" class="img-fluid rounded mb-3 product-image" id="mainImage">
 			</div>
 
@@ -19,19 +18,26 @@
 					</span>
 				</div>
 				<p class="mb-4"></p>
-
+				{{ form_start(form) }}
 				<div class="mb-4">
-					<label for="quantity" class="form-label">Quantity:</label>
+					{{ form_label(form.quantity, 'Quantity:', {'label_attr': {'class': 'form-label'}}) }}
 					{% if product.stock > 0 %}
-						<input type="number" class="form-control" id="quantity" value="1" min="1" max="{{ product.stock }}" style="width: 80px;">
+						{{ form_widget(form.quantity, {'attr': {'min': 1, 'max': product.stock}}) }}
 					{% else %}
 						<p>Ce produit n'est plus disponible.</p>
 					{% endif %}
 				</div>
-				<button class="btn btn-primary btn-lg mb-3 me-2" {% if not is_granted('IS_AUTHENTICATED_FULLY') %} disabled {% endif %}>
-					<i class="bi bi-cart-plus"></i>
-					Add to Cart
-				</button>
+				{{ form_row(form._token) }}
+				{{ form_widget(form.productPrice) }}
+				{{ form_widget(form.productId) }}
+
+				{{ form_widget(form.add, {
+        		'attr': {
+					'class': 'btn btn-primary btn-lg mb-3 me-2',
+					'disabled': product.stock <= 0 or not is_granted('IS_AUTHENTICATED_FULLY')}}) }}
+				{{ form_end(form, {'render_rest': false}) }}
+
+
 				<div class="d-flex">
 					<div class="mt-4">
 						<h5>Catégories</h5>

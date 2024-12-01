@@ -1,20 +1,38 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello OrderController!{% endblock %}
+{% block title %}Mon Panier
+{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+	<h1>Mon Panier</h1>
+	<div class="container d-flex justify-content-center flex-column">
+		{% if orderData %}
+			<table class="table table-bordered table-striped">
+				<thead>
+					<tr>
+						<th scope="col">Produit</th>
+						<th scope="col">Quantité</th>
+						<th scope="col">Prix Unitaire (€)</th>
+						<th scope="col">Total (€)</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for item in orderData.orderItems %}
+						<tr>
+							<td>{{ item.product.name }}</td>
+							<td>{{ item.quantity }}</td>
+							<td>{{ item.product.price }}</td>
+							<td>{{ item.quantity * item.product.price }}</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>/var/www/symfony/src/Controller/OrderController.php</code></li>
-        <li>Your template at <code>/var/www/symfony/templates/order/index.html.twig</code></li>
-    </ul>
-</div>
+			<div class="mt-4">
+				<a href="#" class="btn btn-success btn-lg">Acheter</a>
+			</div>
+		{% else %}
+			<p>Votre panier est vide.</p>
+		{% endif %}
+	</div>
 {% endblock %}

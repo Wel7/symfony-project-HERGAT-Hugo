@@ -59,6 +59,15 @@ class ProductRepository extends ServiceEntityRepository
             ->getQuery();
     }
 
+    public function findProductsByVtuberId($categoryId)
+    {
+        return $this->createQueryBuilder('p')
+            ->innerJoin('p.vtuber', 'v')
+            ->where('v.id = :id')
+            ->setParameter('id', $categoryId)
+            ->getQuery();
+    }
+
 
 
     //    /**

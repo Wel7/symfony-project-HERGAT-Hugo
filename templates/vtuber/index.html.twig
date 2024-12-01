@@ -1,11 +1,8 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello VtuberController!
-{% endblock %}
-
 {% block body %}
 	<div class="container mt-5 mb-5">
-		<h1 class="text-center mb-4">Liste des Vtubers</h1>
+		<h1 class="text-center mb-4">{{'vtuber.list' | trans}}</h1>
 		<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
 			{% for vtuber in vtubers %}
 				<div class="col">
