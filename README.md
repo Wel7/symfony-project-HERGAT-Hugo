@@ -1,13 +1,38 @@
+# Installation
+
+Normaleement un `docker compose up -d` suffit, mais des fois les dépendances peuvent ne pas s'installer correcter, vous pouver donc faire :
+
+- `docker compose up -d`
+- `docker exec -it symfony_php sh`
+- `composer install` ('S'il y a une erreur à cette étape, supprimer le dossier `var/cache`)
+- `php bin/console doctrine:schema:create`
+- `php bin/console doctrine:migrations:migrate`
+- `php bin/console doctrine:fixtures:load` (S'il y a une erreur à cette étape là, c'est probablement du a la ram, allez dans `src/DataFixtures/AppFixtures.php` et augmenter la ram maximum alloué)
+
+## Travail réalisé (par rapport au sujet)
+
+- 1 : fait
+- 2 : fait
+- 3 : fait
+- 4 : fait
+- 5 : fait
+- 6 : Addition, suppresion faite, pas de modification
+- 7 : fait
+- 8 : panier fait
+- 9 (sujet 2) : pas fait
+
 # Symfony 7.1 Boilerplate
 
 Attention :
 
 Windows :
+
 - Il vous faut Docker Desktop et WSL2 pour lancer le projet sous Windows.
 - Pour installer wsl lancer la commande `wsl --install` dans un terminal powershell en tant qu'administrateur.
 - Pour installer Docker Desktop, télécharger le logiciel sur le site officiel de Docker.
 
 Linux (Uniquement pour les utilisateurs de Linux pas pour WSL) :
+
 - Il vous faut Docker et Docker-compose.
 - Pour installer Docker et Docker-compose https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
 

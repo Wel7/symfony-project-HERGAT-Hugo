@@ -38,3 +38,5 @@ EXPOSE 9000
 
 # Commande de démarrage de PHP-FPM
 CMD ["php-fpm"]
+
+
