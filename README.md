@@ -1,7 +1,5 @@
 # Installation
 
-Normaleement un `docker compose up -d` suffit, mais des fois les dépendances peuvent ne pas s'installer correcter, vous pouver donc faire :
-
 - `docker compose up -d`
 - `docker exec -it symfony_php sh`
 - `composer install` ('S'il y a une erreur à cette étape, supprimer le dossier `var/cache`)
@@ -20,6 +18,15 @@ Normaleement un `docker compose up -d` suffit, mais des fois les dépendances pe
 - 7 : fait
 - 8 : panier + achat fait (avec gestion des stocks)
 - 9 (sujet 2) : update stock en direct, update panier presque en direct
+
+Compte de connexion :
+compte user
+- user1@example.com
+- password1
+
+compte admin
+- user2@example.com
+- password2
 
 Petite note :
 J'avais ajouté des règles a la bdd pour gérer en stock/plus de stock, mais je n'ai pas trouvé comment ajouter de règles a la bdd via les fixtures/en l'automatisant.
